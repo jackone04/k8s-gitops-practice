@@ -2,7 +2,7 @@ name: Build and Push Docker Image
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
       - 'app/**'
 
@@ -25,3 +25,30 @@ jobs:
           context: ./app
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/nginx-demo:${{ github.sha }}
+
+  update-manifest:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Update image tag in manifest
+        env:
+          SHA: ${{ github.sha }}
+        run: |
+          sed -i "s|jackone04/nginx-demo:.*|jackone04/nginx-demo:${SHA}|" \
+            manifests/deployment.yaml
+          echo "=== 验证替换结果 ==="
+          grep 'image:' manifests/deployment.yaml
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add manifests/deployment.yaml
+          git diff --cached --quiet || \
+            git commit -m "ci: update image to ${{ github.sha }} [skip ci]"
+          git push
