@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: jackone04/nginx-demo:
+        image: jackone04/nginx-demo:68191ead81d887ab0ab6a1d1192b9d0574920399
         ports:
         - containerPort: 80
