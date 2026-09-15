@@ -7,7 +7,29 @@ on:
       - 'app/**'
 
 jobs:
+  guard-no-latest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: 拦截 latest 与未锁版本的镜像引用
+        run: |
+          set -e
+          echo "--- 检查 1：显式 :latest"
+          if grep -rn ':latest' app/Dockerfile*; then
+            echo "::error::检测到 :latest，拦截"
+            exit 1
+          fi
+          echo "--- 检查 2：FROM 未写版本号/digest"
+          if grep -rnE '^\s*FROM\s+[^:@[:space:]]+(\s|$)' app/Dockerfile*; then
+            echo "::error::FROM 未锁定版本，拦截"
+            exit 1
+          fi
+          echo "OK：基础镜像已锁定版本"
+
   build-and-push:
+    needs: guard-no-latest
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
