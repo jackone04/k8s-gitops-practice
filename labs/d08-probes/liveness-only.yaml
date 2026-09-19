@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: slow-start-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: slow-start-demo
+  template:
+    metadata:
+      labels:
+        app: slow-start-demo
+    spec:
+      containers:
+      - name: demo
+        image: nginx:1.27
+        command: ["/bin/sh", "-c"]
+        args:
+          - "sleep 30 && nginx -g 'daemon off;'"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
