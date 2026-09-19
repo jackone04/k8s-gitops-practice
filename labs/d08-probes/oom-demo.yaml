@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oom-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oom-demo
+  template:
+    metadata:
+      labels:
+        app: oom-demo
+    spec:
+      containers:
+      - name: demo
+        image: python:3.12-slim
+        command: ["python3", "-c"]
+        args:
+          - |
+            data = []
+            while True:
+                data.append(' ' * 10**6)
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "100m"
+            memory: "256Mi"
