@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ctrl-demo-sts-headless
+spec:
+  clusterIP: None
+  selector:
+    app: ctrl-demo
+    kind: statefulset
+  ports:
+  - port: 80
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ctrl-demo-sts
+spec:
+  serviceName: ctrl-demo-sts-headless
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ctrl-demo
+      kind: statefulset
+  template:
+    metadata:
+      labels:
+        app: ctrl-demo
+        kind: statefulset
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.27

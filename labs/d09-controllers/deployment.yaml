@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ctrl-demo-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ctrl-demo
+      kind: deployment
+  template:
+    metadata:
+      labels:
+        app: ctrl-demo
+        kind: deployment
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.27

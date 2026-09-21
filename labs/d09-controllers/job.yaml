@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ctrl-demo-job
+spec:
+  completions: 3
+  parallelism: 2
+  backoffLimit: 1
+  template:
+    spec:
+      containers:
+      - name: fail-task
+        image: busybox:1.36
+        command: ["sh", "-c", "echo 尝试执行任务; exit 1"]
+      restartPolicy: Never
