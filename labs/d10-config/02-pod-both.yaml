@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cfg-demo
+  namespace: d10
+spec:
+  containers:
+  - name: app
+    image: busybox:1.36            # 锁版本，别写 latest（D06 的 guard 会拦）
+    command: ["sh", "-c", "sleep infinity"]
+    env:
+    - name: APP_MODE               # 方式一：环境变量注入
+      valueFrom:
+        configMapKeyRef:
+          name: app-config
+          key: APP_MODE
+    volumeMounts:
+    - name: cfg                    # 方式二：卷挂载（整个 ConfigMap）
+      mountPath: /etc/app
+    - name: cfg                    # 方式三：subPath 挂单个文件（对照组）
+      mountPath: /etc/single/app.properties
+      subPath: app.properties
+  volumes:
+  - name: cfg
+    configMap:
+      name: app-config

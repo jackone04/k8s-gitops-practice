@@ -1,0 +1,5 @@
+# 绝不入库
+*.key
+*master.key
+secrets-plain/
+*-plain.yaml

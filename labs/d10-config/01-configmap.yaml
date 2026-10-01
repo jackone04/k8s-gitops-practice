@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: d10
+data:
+  APP_MODE: "dev"
+  app.properties: |
+    mode=dev
+    retry=3
